@@ -1,0 +1,34 @@
+{
+  "description": "Maps business terms users say to actual database values. Add entries here whenever users ask about regions, groups, or aliases that don't exist as columns.",
+
+  "branch_regions": {
+    "pune": ["PUNE001", "PUNE002", "PUNE003"],
+    "mumbai": ["MUM001", "MUM002", "MUM003", "MUM004"],
+    "delhi": ["DEL001", "DEL002"],
+    "bangalore": ["BLR001", "BLR002", "BLR003"],
+    "north region": ["DEL001", "DEL002", "LKW001"],
+    "south region": ["BLR001", "BLR002", "CHN001"],
+    "west region": ["MUM001", "MUM002", "MUM003", "MUM004", "PUNE001", "PUNE002", "PUNE003"]
+  },
+
+  "term_aliases": {
+    "earning": "TotalAmount",
+    "earnings": "TotalAmount",
+    "revenue": "TotalAmount",
+    "sales": "TotalAmount",
+    "income": "TotalAmount",
+    "turnover": "TotalAmount",
+    "gross": "GrossAmount",
+    "net": "NetAmount",
+    "bill": "BillAmount",
+    "discount": "TotalDiscountAmount",
+    "orders": "COUNT(*)",
+    "transactions": "COUNT(*)"
+  },
+
+  "notes": [
+    "branch_regions: keys are lowercase user terms, values are the exact branchCode values in Rista_SaleInvoices",
+    "term_aliases: maps business words to column names for the LLM's reference",
+    "Update branch_regions with real branchCode values from your database"
+  ]
+}

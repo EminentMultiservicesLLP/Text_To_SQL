@@ -1,0 +1,158 @@
+@* Plain SVG chart: no JavaScript library and nothing loaded from the internet. *@
+
+@if (_points.Count > 0)
+{
+    <svg class="dc-chart" viewBox="0 0 @W @H" role="img" aria-label="@_title">
+        @if (Chart.Type == "pie")
+        {
+            var total = _points.Sum(p => Math.Max(p.Values[0], 0));
+            var angle = -Math.PI / 2;
+            for (var i = 0; i < _points.Count; i++)
+            {
+                var p = _points[i];
+                var share = total > 0 ? Math.Max(p.Values[0], 0) / total : 0;
+                var sweep = share * 2 * Math.PI;
+                <path d="@PieSlice(angle, sweep)" fill="@Color(i)">
+                    <title>@p.Label: @Formatter.FormatNumber(p.Values[0], _yCols[0].Format) (@((share * 100).ToString("0.#"))%)</title>
+                </path>
+                angle += sweep;
+            }
+            for (var i = 0; i < _points.Count; i++)
+            {
+                <g>
+                    <rect x="330" y="@(30 + i * 22)" width="12" height="12" fill="@Color(i)" />
+                    <text x="350" y="@(41 + i * 22)" class="dc-legend">@Trim(_points[i].Label, 28)</text>
+                </g>
+            }
+        }
+        else
+        {
+            for (var t = 0; t <= 4; t++)
+            {
+                var v = _min + (_max - _min) * t / 4;
+                var y = Y(v);
+                <g>
+                    <line x1="@L" x2="@(W - R)" y1="@F(y)" y2="@F(y)" class="dc-grid" />
+                    <text x="@(L - 6)" y="@F(y + 4)" text-anchor="end" class="dc-axis">@Formatter.Compact(v)</text>
+                </g>
+            }
+            for (var i = 0; i < _points.Count; i++)
+            {
+                if (i % _labelEvery != 0) continue;
+                var x = F(XCenter(i));
+                var ly = H - B + 16;
+                <g>
+                    <text x="@x" y="@ly" text-anchor="end" transform="rotate(-35 @x @ly)" class="dc-axis">@Trim(_points[i].Label, 14)</text>
+                </g>
+            }
+            if (Chart.Type == "line")
+            {
+                for (var s = 0; s < _yCols.Count; s++)
+                {
+                    var series = s;
+                    <polyline fill="none" stroke="@Color(series)" stroke-width="2"
+                              points="@string.Join(" ", _points.Select((p, i) => $"{F(XCenter(i))},{F(Y(p.Values[series]))}"))" />
+                    for (var i = 0; i < _points.Count; i++)
+                    {
+                        <circle cx="@F(XCenter(i))" cy="@F(Y(_points[i].Values[series]))" r="3" fill="@Color(series)">
+                            <title>@_points[i].Label: @Formatter.FormatNumber(_points[i].Values[series], _yCols[series].Format)</title>
+                        </circle>
+                    }
+                }
+            }
+            else
+            {
+                var slot = (W - L - R) / (double)_points.Count;
+                var bw = slot * 0.7 / _yCols.Count;
+                for (var i = 0; i < _points.Count; i++)
+                {
+                    for (var s = 0; s < _yCols.Count; s++)
+                    {
+                        var v = _points[i].Values[s];
+                        var x = L + slot * i + slot * 0.15 + bw * s;
+                        var top = Math.Min(Y(v), Y(0));
+                        var h = Math.Abs(Y(v) - Y(0));
+                        <rect x="@F(x)" y="@F(top)" width="@F(bw)" height="@F(h)" fill="@Color(s)">
+                            <title>@_points[i].Label: @Formatter.FormatNumber(v, _yCols[s].Format)</title>
+                        </rect>
+                    }
+                }
+            }
+            if (_yCols.Count > 1)
+            {
+                for (var s = 0; s < _yCols.Count; s++)
+                {
+                    <g>
+                        <rect x="@(L + s * 150)" y="2" width="10" height="10" fill="@Color(s)" />
+                        <text x="@(L + 14 + s * 150)" y="11" class="dc-legend">@_yCols[s].Label</text>
+                    </g>
+                }
+            }
+        }
+    </svg>
+}
+
+@code {
+    [Parameter, EditorRequired] public ChartInfo Chart { get; set; } = default!;
+    [Parameter, EditorRequired] public List<ColumnInfo> Columns { get; set; } = [];
+    [Parameter, EditorRequired] public List<List<JsonElement>> Rows { get; set; } = [];
+    [Parameter, EditorRequired] public CellFormatter Formatter { get; set; } = default!;
+
+    private const int W = 640, H = 290, L = 64, R = 12, T = 18, B = 70;
+    private static readonly string[] Palette = ["#2563eb", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6", "#06b6d4", "#84cc16", "#f97316", "#ec4899", "#64748b"];
+
+    private sealed record Point(string Label, double[] Values);
+
+    private List<Point> _points = [];
+    private List<ColumnInfo> _yCols = [];
+    private double _min, _max;
+    private int _labelEvery = 1;
+    private string _title = "";
+
+    protected override void OnParametersSet()
+    {
+        var xi = Columns.FindIndex(c => c.Name == Chart.X);
+        var yi = Chart.Y.Select(y => Columns.FindIndex(c => c.Name == y)).Where(i => i >= 0).ToList();
+        _points = [];
+        if (xi < 0 || yi.Count == 0) return;
+        _yCols = yi.Select(i => Columns[i]).ToList();
+        foreach (var row in Rows)
+        {
+            var values = yi.Select(i => CellFormatter.AsNumber(row[i]) ?? 0).ToArray();
+            _points.Add(new Point(CellFormatter.AsText(row[xi]), values));
+        }
+        var all = _points.SelectMany(p => p.Values).ToList();
+        _min = Math.Min(0, all.Min());
+        _max = NiceCeiling(Math.Max(all.Max(), _min + 1));
+        _labelEvery = Math.Max(1, (int)Math.Ceiling(_points.Count / 14.0));
+        _title = $"{string.Join(", ", _yCols.Select(c => c.Label))} by {Columns[xi].Label}";
+    }
+
+    private static double NiceCeiling(double v)
+    {
+        if (v <= 0) return 1;
+        var exp = Math.Pow(10, Math.Floor(Math.Log10(v)));
+        var f = v / exp;
+        var nice = f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10;
+        return nice * exp;
+    }
+
+    private double Y(double v) => T + (H - T - B) * (1 - (v - _min) / (_max - _min));
+    private double XCenter(int i) => L + (W - L - R) * (i + 0.5) / _points.Count;
+    private static string F(double d) => d.ToString("0.#", CultureInfo.InvariantCulture);
+    private static string Color(int i) => Palette[i % Palette.Length];
+    private static string Trim(string s, int n) => s.Length <= n ? s : s[..(n - 1)] + "…";
+
+    private static string PieSlice(double start, double sweep)
+    {
+        const double cx = 160, cy = 145, r = 120;
+        if (sweep >= 2 * Math.PI - 1e-6)
+            return $"M {F(cx - r)},{F(cy)} a {F(r)},{F(r)} 0 1,0 {F(2 * r)},0 a {F(r)},{F(r)} 0 1,0 {F(-2 * r)},0";
+        var x1 = cx + r * Math.Cos(start);
+        var y1 = cy + r * Math.Sin(start);
+        var x2 = cx + r * Math.Cos(start + sweep);
+        var y2 = cy + r * Math.Sin(start + sweep);
+        var large = sweep > Math.PI ? 1 : 0;
+        return $"M {F(cx)},{F(cy)} L {F(x1)},{F(y1)} A {F(r)},{F(r)} 0 {large},1 {F(x2)},{F(y2)} Z";
+    }
+}

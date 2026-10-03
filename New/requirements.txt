@@ -1,0 +1,7 @@
+pyodbc
+ollama
+chromadb
+sqlparse
+streamlit
+python-dotenv
+pandas

@@ -1,0 +1,899 @@
+{
+  "tables": [
+    {
+      "name": "Rista_SaleCustomers",
+      "columns": [
+        {
+          "name": "ID",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Title",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Name",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PhoneNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxId",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PhoneLast10",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [
+        {
+          "column": "InvoiceID",
+          "references": "Rista_SaleCustomers.InvoiceID"
+        }
+      ]
+    },
+    {
+      "name": "Rista_SaleDelivery",
+      "columns": [
+        {
+          "name": "DeliveryID",
+          "type": "int",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Title",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AdvanceOrder",
+          "type": "bit",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Name",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PhoneNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AddressLabel",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AddressLine",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "City",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "State",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Country",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Zip",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Landmark",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Latitude",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Longitude",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "DeliveryDate",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": "DeliveryID",
+      "foreign_keys": [
+        {
+          "column": "InvoiceID",
+          "references": "Rista_SaleDelivery.InvoiceID"
+        }
+      ]
+    },
+    {
+      "name": "Rista_SaleDeliveryBy",
+      "columns": [
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Name",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Email",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PhoneNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [
+        {
+          "column": "InvoiceID",
+          "references": "Rista_SaleDeliveryBy.InvoiceID"
+        }
+      ]
+    },
+    {
+      "name": "Rista_SaleInvoices",
+      "columns": [
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "branchCode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "OrderNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "StatementNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceDate",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceDay",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CreatedDate",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ModifiedDate",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "DeviceLabel",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceType",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Status",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "FulfillmentStatus",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SourceOutletID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "OriginalSaleInvoiceNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "DeliveryMode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Label",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "LabelGroup",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SessionLabel",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PersonCount",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SaleByUserID",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Channel",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Currency",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ItemCount",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ItemTotalAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "directchargeamout",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ChargeAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "DiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TotalDiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxAmountIncluded",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxAmountExcluded",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "GrossAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "NetDiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "NetDirectChargeAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "NetAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "NetChargeAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BillAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "RoundOffAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BillRoundedAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TipAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TotalAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TotalCost",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Note",
+          "type": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "URL",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "StatusInfoReason",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AccountingRoundOff",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "LastKey",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": "InvoiceID",
+      "foreign_keys": []
+    },
+    {
+      "name": "Rista_SaleItems",
+      "columns": [
+        {
+          "name": "ItemID",
+          "type": "int",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ShortName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "LongName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Variants",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SKUCode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BarCode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CategoryName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SubCategoryName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BrandName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "AccountName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ItemNature",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Quantity",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "UnitPrice",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Overridden",
+          "type": "bit",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "MeasuringUnit",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ItemAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "OptionAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "DiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "FactoredDiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ItemTotalAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "GrossAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BaseGrossAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "NetDiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BaseNetDiscountAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "NetAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BaseNetAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxAmountIncluded",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxAmountExcluded",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "BaseTaxAmount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "ItemCost",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CreatedBy",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CreatedTime",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Note",
+          "type": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KotNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KotGroup",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KotTimestamp",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "KotStatus",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "TaxCode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": "ItemID",
+      "foreign_keys": [
+        {
+          "column": "InvoiceID",
+          "references": "Rista_SaleItems.InvoiceID"
+        }
+      ]
+    },
+    {
+      "name": "Rista_SalePayments",
+      "columns": [
+        {
+          "name": "PaymentID",
+          "type": "int",
+          "nullable": false,
+          "default": null
+        },
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Mode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "SubMode",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Amount",
+          "type": "decimal",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Reference",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Note",
+          "type": "text",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "PostedDate",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": "PaymentID",
+      "foreign_keys": [
+        {
+          "column": "InvoiceID",
+          "references": "Rista_SalePayments.InvoiceID"
+        }
+      ]
+    },
+    {
+      "name": "Rista_SaleSourceInfo",
+      "columns": [
+        {
+          "name": "InvoiceID",
+          "type": "int",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CompanyName",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceNumber",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "InvoiceDate",
+          "type": "datetimeoffset",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "CallbackURL",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "Source",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "sourceOutletId",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "OutletID",
+          "type": "varchar",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "IsEditable",
+          "type": "bit",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "VerifyCoupons",
+          "type": "bit",
+          "nullable": true,
+          "default": null
+        },
+        {
+          "name": "IsEcomOrder",
+          "type": "bit",
+          "nullable": true,
+          "default": null
+        }
+      ],
+      "primary_key": null,
+      "foreign_keys": [
+        {
+          "column": "InvoiceID",
+          "references": "Rista_SaleSourceInfo.InvoiceID"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+@* Chat window for the DataChat engine. Requires an interactive server render mode in the host page. *@
+@inject DataChatClient Api
+@inject IOptions<DataChatOptions> Options
+@inject IJSRuntime JS
+@implements IAsyncDisposable
+
+@if (Api.IsEnabled)
+{
+<div class="dc-window">
+    <div class="dc-header">
+        <span>@(Title ?? _info?.DisplayName ?? "Data assistant")</span>
+        <button class="dc-link" @onclick="NewConversation" disabled="@_busy">New chat</button>
+    </div>
+
+    <div class="dc-messages">
+        @if (_turns.Count == 0 && _info is not null)
+        {
+            <div class="dc-hint">
+                <div>Ask a question about your data, in English, Hinglish or Marathi. For example:</div>
+                @foreach (var ex in _info.Examples.Take(5))
+                {
+                    <button class="dc-chip" @onclick="() => AskAsync(ex)" disabled="@_busy">@ex</button>
+                }
+            </div>
+        }
+
+        @foreach (var turn in _turns)
+        {
+            if (turn.Response is null)
+            {
+                <div class="dc-msg dc-user">@turn.Text</div>
+                continue;
+            }
+            var r = turn.Response;
+            <div class="dc-msg dc-bot @($"dc-{r.Type}")">
+                <div class="dc-text">@r.Text</div>
+
+                @if (r.Assumptions.Count > 0)
+                {
+                    <ul class="dc-notes">
+                        @foreach (var a in r.Assumptions)
+                        {
+                            <li>@a</li>
+                        }
+                    </ul>
+                }
+
+                @if (r.Type == "clarify")
+                {
+                    <div class="dc-options">
+                        @foreach (var o in r.Options)
+                        {
+                            <button class="dc-chip" disabled="@(_busy || turn.Answered)" @onclick="() => ChooseAsync(turn, o)">@o.Label</button>
+                        }
+                    </div>
+                }
+
+                @if (r.Chart is not null && r.Rows.Count > 0)
+                {
+                    <DataChatChart Chart="r.Chart" Columns="r.Columns" Rows="r.Rows" Formatter="_fmt" />
+                }
+
+                @if (r.Rows.Count > 1 || (r.Rows.Count == 1 && r.Columns.Count > 1))
+                {
+                    <details class="dc-details" open="@(r.Chart is null && r.Rows.Count <= 20)">
+                        <summary>Table (@r.RowCount row@(r.RowCount == 1 ? "" : "s")@(r.Capped ? ", capped" : ""))</summary>
+                        <div class="dc-table-wrap">
+                            <table class="dc-table">
+                                <thead>
+                                    <tr>
+                                        @foreach (var c in r.Columns)
+                                        {
+                                            <th class="@(c.Kind == "metric" ? "dc-num" : "")">@c.Label</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in r.Rows)
+                                    {
+                                        <tr>
+                                            @for (var i = 0; i < r.Columns.Count && i < row.Count; i++)
+                                            {
+                                                var c = r.Columns[i];
+                                                <td class="@(c.Kind == "metric" ? "dc-num" : "")">@_fmt.Format(row[i], c.Format)</td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </details>
+                    <div class="dc-export">
+                        <span>Download@(r.Capped ? $" (first {r.RowCount} rows)" : ""):</span>
+                        <button class="dc-link" @onclick="() => ExportAsync(turn, true)">Excel</button>
+                        <button class="dc-link" @onclick="() => ExportAsync(turn, false)">CSV</button>
+                    </div>
+                }
+
+                @if (r.FollowUps.Count > 0)
+                {
+                    <div class="dc-options">
+                        @foreach (var f in r.FollowUps)
+                        {
+                            <button class="dc-chip dc-next" disabled="@_busy" @onclick="() => FollowUpAsync(f)">@f.Label</button>
+                        }
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(r.Sql))
+                {
+                    <details class="dc-details">
+                        <summary>SQL</summary>
+                        <pre class="dc-sql">@r.Sql</pre>
+                    </details>
+                }
+
+                @if (r.Type == "answer" && r.QueryId is not null)
+                {
+                    <div class="dc-feedback">
+                        @if (turn.Rating is null)
+                        {
+                            <button class="dc-link" title="Correct" @onclick="() => RateAsync(turn, 1)">👍</button>
+                            <button class="dc-link" title="Wrong" @onclick="() => RateAsync(turn, -1)">👎</button>
+                        }
+                        else
+                        {
+                            <span>Thanks for the feedback.</span>
+                        }
+                        <span class="dc-meta">@(r.ElapsedMs) ms@(r.Source == "llm" ? " · local model" : "")</span>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (_busy)
+        {
+            <div class="dc-msg dc-bot dc-typing">Working…</div>
+        }
+    </div>
+
+    <form class="dc-input" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
+        <input @bind="_input" placeholder="Ask about your data…" disabled="@_busy" maxlength="500" />
+        <button type="submit" disabled="@_busy">Send</button>
+    </form>
+</div>
+}
+
+@code {
+    /// <summary>Client pack to use; defaults to DataChatOptions.ClientId.</summary>
+    [Parameter] public string? ClientId { get; set; }
+
+    /// <summary>User id for learning and logs; defaults to the signed-in user's name.</summary>
+    [Parameter] public string? UserId { get; set; }
+
+    [Parameter] public string? Title { get; set; }
+
+    [CascadingParameter] private Task<AuthenticationState>? AuthState { get; set; }
+
+    private sealed class Turn
+    {
+        public string Text { get; init; } = "";
+        public ChatResponse? Response { get; init; }
+        public string? Question { get; init; }
+        public Dictionary<string, string> Overrides { get; init; } = [];
+        public bool Answered { get; set; }
+        public int? Rating { get; set; }
+    }
+
+    private readonly List<Turn> _turns = [];
+    private string _input = "";
+    private bool _busy;
+    private string _conversationId = Guid.NewGuid().ToString("N");
+    private string _userId = "anonymous";
+    private ClientInfo? _info;
+    private CellFormatter _fmt = new("₹", true);
+
+    private string Client => string.IsNullOrWhiteSpace(ClientId) ? Options.Value.ClientId : ClientId!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Api.IsEnabled) return;
+        _userId = UserId ?? (AuthState is null ? null : (await AuthState).User.Identity?.Name) ?? "anonymous";
+        _info = await Api.GetClientInfoAsync(Client);
+        if (_info is not null)
+        {
+            _fmt = new CellFormatter(_info.CurrencySymbol, _info.IndianGrouping);
+        }
+    }
+
+    private async Task SubmitAsync()
+    {
+        var text = _input.Trim();
+        if (text.Length == 0) return;
+        _input = "";
+        await AskAsync(text);
+    }
+
+    private Task AskAsync(string text) => SendAsync(text, [], showUserTurn: true);
+
+    private async Task ChooseAsync(Turn clarifyTurn, ClarifyOption option)
+    {
+        clarifyTurn.Answered = true;
+        var overrides = new Dictionary<string, string>(clarifyTurn.Overrides);
+        foreach (var (k, v) in option.Overrides) overrides[k] = v;
+        _turns.Add(new Turn { Text = option.Label });
+        await SendAsync(clarifyTurn.Question ?? "", overrides, showUserTurn: false);
+    }
+
+    private Task FollowUpAsync(FollowUp f) => SendAsync(f.Label, [], showUserTurn: true, f.Plan);
+
+    private async Task SendAsync(string question, Dictionary<string, string> overrides, bool showUserTurn,
+        JsonElement? plan = null)
+    {
+        if (showUserTurn) _turns.Add(new Turn { Text = question });
+        _busy = true;
+        StateHasChanged();
+        try
+        {
+            var response = await Api.ChatAsync(new ChatRequest(Client, _userId, _conversationId, question, overrides, plan));
+            _turns.Add(new Turn { Response = response, Question = question, Overrides = overrides });
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RateAsync(Turn turn, int rating)
+    {
+        if (turn.Response?.QueryId is not long id) return;
+        turn.Rating = rating;
+        try
+        {
+            await Api.SendFeedbackAsync(new FeedbackRequest(Client, _userId, id, rating, null));
+        }
+        catch (HttpRequestException)
+        {
+            turn.Rating = null;
+        }
+    }
+
+    private async Task ExportAsync(Turn turn, bool excel)
+    {
+        if (turn.Response is not { } r) return;
+        var question = turn.Question ?? "datachat";
+        var bytes = excel ? TableExport.Xlsx(r.Columns, r.Rows, _info?.DisplayName ?? "Data") : TableExport.Csv(r.Columns, r.Rows);
+        var type = excel ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : "text/csv";
+        _js ??= await JS.InvokeAsync<IJSObjectReference>("import", "./_content/DataChat.Blazor/datachat.js");
+        using var stream = new DotNetStreamReference(new MemoryStream(bytes));
+        await _js.InvokeVoidAsync("downloadFile", TableExport.FileName(question, excel ? "xlsx" : "csv"), type, stream);
+    }
+
+    private IJSObjectReference? _js;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_js is null) return;
+        try
+        {
+            await _js.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+    }
+
+    private void NewConversation()
+    {
+        _turns.Clear();
+        _conversationId = Guid.NewGuid().ToString("N");
+    }
+}

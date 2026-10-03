@@ -1,0 +1,70 @@
+[
+  {
+    "question": "What were the total sales for today?",
+    "sql": "SELECT SUM(TotalAmount) AS TotalSales, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE CAST(InvoiceDate AS date) = CAST(GETDATE() AS date) AND Status != 'Cancelled'"
+  },
+  {
+    "question": "Show me the top 10 best-selling items this month",
+    "sql": "SELECT TOP 10 si.LongName, SUM(si.Quantity) AS TotalQty, SUM(si.ItemTotalAmount) AS TotalRevenue FROM Rista_SaleItems si JOIN Rista_SaleInvoices inv ON si.InvoiceID = inv.InvoiceID WHERE MONTH(inv.InvoiceDate) = MONTH(GETDATE()) AND YEAR(inv.InvoiceDate) = YEAR(GETDATE()) AND inv.Status != 'Cancelled' GROUP BY si.LongName ORDER BY TotalQty DESC"
+  },
+  {
+    "question": "What is the revenue breakdown by payment method?",
+    "sql": "SELECT p.Mode AS PaymentMethod, SUM(p.Amount) AS TotalAmount, COUNT(DISTINCT p.InvoiceID) AS InvoiceCount FROM Rista_SalePayments p JOIN Rista_SaleInvoices inv ON p.InvoiceID = inv.InvoiceID WHERE inv.Status != 'Cancelled' GROUP BY p.Mode ORDER BY TotalAmount DESC"
+  },
+  {
+    "question": "How many orders were delivered vs dine-in last week?",
+    "sql": "SELECT DeliveryMode, COUNT(*) AS OrderCount, SUM(TotalAmount) AS Revenue FROM Rista_SaleInvoices WHERE InvoiceDate >= DATEADD(day, -7, GETDATE()) AND Status != 'Cancelled' GROUP BY DeliveryMode"
+  },
+  {
+    "question": "Which branch had the highest sales this month?",
+    "sql": "SELECT TOP 5 branchCode, SUM(TotalAmount) AS TotalSales, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE MONTH(InvoiceDate) = MONTH(GETDATE()) AND YEAR(InvoiceDate) = YEAR(GETDATE()) AND Status != 'Cancelled' GROUP BY branchCode ORDER BY TotalSales DESC"
+  },
+  {
+    "question": "Show average order value by channel",
+    "sql": "SELECT Channel, AVG(TotalAmount) AS AvgOrderValue, COUNT(*) AS OrderCount FROM Rista_SaleInvoices WHERE Status != 'Cancelled' GROUP BY Channel ORDER BY AvgOrderValue DESC"
+  },
+  {
+    "question": "What items were sold in category Beverages today?",
+    "sql": "SELECT si.LongName, SUM(si.Quantity) AS TotalQty, SUM(si.ItemTotalAmount) AS Revenue FROM Rista_SaleItems si JOIN Rista_SaleInvoices inv ON si.InvoiceID = inv.InvoiceID WHERE si.CategoryName = 'Beverages' AND CAST(inv.InvoiceDate AS date) = CAST(GETDATE() AS date) AND inv.Status != 'Cancelled' GROUP BY si.LongName ORDER BY TotalQty DESC"
+  },
+  {
+    "question": "Show total discount given this month",
+    "sql": "SELECT SUM(TotalDiscountAmount) AS TotalDiscount, COUNT(*) AS InvoicesWithDiscount FROM Rista_SaleInvoices WHERE TotalDiscountAmount > 0 AND MONTH(InvoiceDate) = MONTH(GETDATE()) AND YEAR(InvoiceDate) = YEAR(GETDATE()) AND Status != 'Cancelled'"
+  },
+  {
+    "question": "List invoices with their customer names and total amounts for today",
+    "sql": "SELECT TOP 100 inv.InvoiceNumber, c.Name AS CustomerName, inv.TotalAmount, inv.DeliveryMode, inv.Status FROM Rista_SaleInvoices inv LEFT JOIN Rista_SaleCustomers c ON inv.InvoiceID = c.InvoiceID WHERE CAST(inv.InvoiceDate AS date) = CAST(GETDATE() AS date) ORDER BY inv.InvoiceDate DESC"
+  },
+  {
+    "question": "What is the hourly sales trend for today?",
+    "sql": "SELECT DATEPART(hour, InvoiceDate) AS Hour, COUNT(*) AS OrderCount, SUM(TotalAmount) AS Revenue FROM Rista_SaleInvoices WHERE CAST(InvoiceDate AS date) = CAST(GETDATE() AS date) AND Status != 'Cancelled' GROUP BY DATEPART(hour, InvoiceDate) ORDER BY Hour"
+  },
+  {
+    "question": "List top 5 branches by earnings last year",
+    "sql": "SELECT TOP 5 branchCode, SUM(TotalAmount) AS TotalEarnings, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE YEAR(InvoiceDate) = YEAR(GETDATE()) - 1 AND Status != 'Cancelled' GROUP BY branchCode ORDER BY TotalEarnings DESC"
+  },
+  {
+    "question": "What were total sales last year?",
+    "sql": "SELECT SUM(TotalAmount) AS TotalSales, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE YEAR(InvoiceDate) = YEAR(GETDATE()) - 1 AND Status != 'Cancelled'"
+  },
+  {
+    "question": "Show earnings for October last year",
+    "sql": "SELECT SUM(TotalAmount) AS TotalEarnings, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE MONTH(InvoiceDate) = 10 AND YEAR(InvoiceDate) = YEAR(GETDATE()) - 1 AND Status != 'Cancelled'"
+  },
+  {
+    "question": "Give me earnings by branch for October last year",
+    "sql": "SELECT branchCode, SUM(TotalAmount) AS TotalEarnings, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE MONTH(InvoiceDate) = 10 AND YEAR(InvoiceDate) = YEAR(GETDATE()) - 1 AND Status != 'Cancelled' GROUP BY branchCode ORDER BY TotalEarnings DESC"
+  },
+  {
+    "question": "Give me earnings of all Pune region branches for October last year",
+    "sql": "SELECT branchCode, SUM(TotalAmount) AS TotalEarnings, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE branchCode IN ('PUNE001','PUNE002','PUNE003') AND MONTH(InvoiceDate) = 10 AND YEAR(InvoiceDate) = YEAR(GETDATE()) - 1 AND Status != 'Cancelled' GROUP BY branchCode ORDER BY TotalEarnings DESC"
+  },
+  {
+    "question": "Compare monthly sales for this year vs last year",
+    "sql": "SELECT MONTH(InvoiceDate) AS Month, YEAR(InvoiceDate) AS Year, SUM(TotalAmount) AS TotalSales FROM Rista_SaleInvoices WHERE YEAR(InvoiceDate) IN (YEAR(GETDATE()), YEAR(GETDATE()) - 1) AND Status != 'Cancelled' GROUP BY YEAR(InvoiceDate), MONTH(InvoiceDate) ORDER BY Year, Month"
+  },
+  {
+    "question": "What were the sales for Q1 last year?",
+    "sql": "SELECT MONTH(InvoiceDate) AS Month, SUM(TotalAmount) AS TotalSales, COUNT(*) AS InvoiceCount FROM Rista_SaleInvoices WHERE MONTH(InvoiceDate) IN (1,2,3) AND YEAR(InvoiceDate) = YEAR(GETDATE()) - 1 AND Status != 'Cancelled' GROUP BY MONTH(InvoiceDate) ORDER BY Month"
+  }
+]
