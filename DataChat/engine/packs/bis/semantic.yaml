@@ -1,0 +1,315 @@
+# Client pack: BIS (security services: billing, receipts, invoices, employees) on PostgreSQL.
+# Built from the draft in draft/ (tools/introspect_postgres.py) and checked against the database:
+# every join below matches 99-100% of rows and points at a unique key.
+# TO VERIFY with the client:
+#   - dashboard_fact_* tables are refreshed by a job (last refresh seen 2026-09-16) and already exclude
+#     cancelled invoices; billing_amount should equal the invoice register total for the same month.
+#   - cancelled invoices are iscancel = 1 or status = 'Cancelled' (isdelete meaning unknown, not used).
+#   - active employees are active = 1.
+
+client: bis
+display_name: BIS
+
+database:
+  dialect: postgres
+  dsn_env: BIS_DSN
+
+formatting:
+  currency_symbol: "₹"
+  indian_grouping: true
+
+tables:
+  bill: { name: public.dashboard_fact_billing_monthly }
+  rcpt: { name: public.dashboard_fact_receipts_monthly }
+  inv:  { name: public.smtbtbulkinvoicedtl }
+  emp:  { name: public.smtbmemployee }
+  loc:  { name: public.smtbmcustbrloc }
+  cust: { name: public.smtbmcustomer }
+  br:   { name: public.smtbmbranch }
+  city: { name: public.smtbmcity }
+  st:   { name: public.smtbmstate }
+  desg: { name: public.smtbmdesignation }
+  dept: { name: public.smtbmdepartment }
+  soc:  { name: public.smtbtsociety }
+
+# Each join says: many rows of `from` point at one row of `to`.
+joins:
+  - { from: bill, to: br,   columns: [[branch_id, brlocid]] }
+  - { from: bill, to: cust, columns: [[customer_id, customerid]] }
+  - { from: bill, to: loc,  columns: [[client_site_id, custbrlocid]] }
+  - { from: bill, to: st,   columns: [[state_id, stateid]] }
+  - { from: rcpt, to: br,   columns: [[branch_id, brlocid]] }
+  - { from: rcpt, to: cust, columns: [[customer_id, customerid]] }
+  - { from: rcpt, to: loc,  columns: [[client_site_id, custbrlocid]] }
+  - { from: rcpt, to: st,   columns: [[state_id, stateid]] }
+  - { from: inv,  to: cust, columns: [[customerid, customerid]] }
+  - { from: inv,  to: loc,  columns: [[custbrlocid, custbrlocid]] }
+  - { from: loc,  to: br,   columns: [[brlocid, brlocid]] }
+  - { from: loc,  to: city, columns: [[cityid, cityid]] }
+  - { from: city, to: st,   columns: [[stateid, stateid]] }
+  - { from: emp,  to: br,   columns: [[branchid, brlocid]] }
+  - { from: emp,  to: desg, columns: [[designationid, designationid]] }
+  - { from: emp,  to: dept, columns: [[departmentid, deptid]] }
+  - { from: soc,  to: br,   columns: [[brlocid, brlocid]] }
+  - { from: soc,  to: emp,  columns: [[empid, empid]] }
+
+dimensions:
+  branch:
+    column: br.brlocname
+    label: Branch
+    synonyms: [branch, branches, office, branch office]
+    load_values: true
+    value_strip_words: [branch]
+  state:
+    column: st.statename
+    label: State
+    synonyms: [state, states]
+    load_values: true
+  city:
+    column: city.cityname
+    label: City
+    synonyms: [city, cities]
+    load_values: true
+  customer:
+    column: cust.custname
+    label: Customer
+    synonyms: [customer, customers, client, clients, party, parties]
+    load_values: true
+  site:
+    column: loc.custbrlocname
+    label: Client site
+    synonyms: [site, sites, client site, customer site, location, locations, customer location]
+  designation:
+    column: desg.designationname
+    label: Designation
+    synonyms: [designation, designations, post, rank, role]
+    load_values: true
+  department:
+    column: dept.deptname
+    label: Department
+    synonyms: [department, departments, dept]
+    load_values: true
+
+areas:
+  billing:
+    label: Billing (monthly)
+    fact: bill
+    time_column: bill.month_start
+    time_resolution: month
+    synonyms: [billing, billed]
+    default_metric: billing_amount
+    metrics:
+      billing_amount:
+        expr: "SUM({bill.billing_amount})"
+        label: Billing amount
+        format: currency
+        synonyms: [billing, billing amount, billed amount, billing value, sales, revenue, turnover, business,
+                   earn, earns, earning, earnings, income, kamai]
+      invoice_count:
+        expr: "SUM({bill.invoice_count})"
+        label: Number of invoices
+        format: integer
+        synonyms: [invoices, invoice count, number of invoices, no of invoices, bills, bill count]
+    examples:
+      - Billing by branch this financial year
+      - Top 10 customers by billing this financial year
+      - Monthly billing trend for last 12 months
+      - is saal ki billing har state
+
+  receipts:
+    label: Receipts (monthly)
+    fact: rcpt
+    time_column: rcpt.month_start
+    time_resolution: month
+    synonyms: [receipts, collections]
+    default_metric: receipt_amount
+    metrics:
+      receipt_amount:
+        expr: "SUM({rcpt.receipt_amount})"
+        label: Amount received
+        format: currency
+        synonyms: [receipts, receipt amount, collection, collections, amount received, payment received,
+                   payments received, received, vasuli, recovery, paid, payment, payments, collected]
+      receipt_count:
+        expr: "SUM({rcpt.receipt_count})"
+        label: Number of receipts
+        format: integer
+        synonyms: [receipt count, number of receipts, no of receipts]
+    examples:
+      - Collections this financial year by branch
+      - Which customer paid the most last quarter?
+
+  invoices:
+    label: Invoice register
+    fact: inv
+    time_column: inv.invoicedate
+    synonyms: [invoice register, invoice list]
+    default_metric: invoice_value
+    default_filters:
+      - { column: inv.iscancel, op: neq, value: "1" }
+      - { column: inv.status, op: neq, value: Cancelled }
+    metrics:
+      invoice_value:
+        expr: "SUM({inv.invoiceamount})"
+        label: Invoice value
+        format: currency
+        synonyms: [invoice value, invoice amount, invoice total, invoiced amount]
+      invoice_tax:
+        expr: "SUM({inv.invbasictaxamt})"
+        label: Tax on invoices
+        format: currency
+        synonyms: [tax, gst, tax amount, gst amount, service tax]
+      invoices_raised:
+        expr: "COUNT(*)"
+        label: Invoices raised
+        format: integer
+        synonyms: [invoices raised, invoices issued]
+      avg_invoice_value:
+        expr: "SUM({inv.invoiceamount}) / NULLIF(COUNT(*), 0)"
+        label: Average invoice value
+        format: currency
+        synonyms: [average invoice, average invoice value, avg invoice, average bill]
+    detail_name: invoice
+    detail_columns:
+      - { column: inv.invoiceno, label: Invoice no }
+      - { column: inv.invoicedate, label: Invoice date, format: date }
+      - { column: cust.custname, label: Customer }
+      - { column: loc.custbrlocname, label: Client site }
+      - { column: inv.invoiceamount, label: Invoice amount, format: currency }
+      - { column: inv.status, label: Status }
+    examples:
+      - Invoice value by customer for July 2026
+      - Daily invoice value last 30 days
+      - GST on invoices this financial year by state
+
+  employees:
+    label: Employees
+    fact: emp
+    time_column: emp.dateofjoining
+    synonyms: [employees, staff, manpower]
+    default_metric: active_employees
+    metrics:
+      active_employees:
+        expr: "SUM(CASE WHEN {emp.active} = 1 THEN 1 ELSE 0 END)"
+        label: Active employees
+        format: integer
+        snapshot: true
+        synonyms: [employees, employee count, headcount, head count, staff, manpower, guards, active employees,
+                   strength, active]
+      employees_joined:
+        expr: "COUNT(*)"
+        label: Employees joined
+        format: integer
+        synonyms: [joined, joinings, joining, new joinings, new employees, hired, hiring, recruited, recruitment]
+      inactive_employees:
+        expr: "SUM(CASE WHEN {emp.active} = 1 THEN 0 ELSE 1 END)"
+        label: Inactive employees
+        format: integer
+        snapshot: true
+        synonyms: [inactive employees, inactive staff, inactive guards, not active]
+      # No leaving or exit dates are filled in (dateofleaving, dateofexit, lastworkdate are all empty), so
+      # "employees who left last month" / attrition cannot be answered yet.
+    detail_name: employee
+    detail_columns:
+      - { column: emp.ticketcode, label: Employee code }
+      - { column: emp.empname, label: Name }
+      - { column: desg.designationname, label: Designation }
+      - { column: dept.deptname, label: Department }
+      - { column: br.brlocname, label: Branch }
+      - { column: emp.dateofjoining, label: Date of joining, format: date }
+    examples:
+      - Active employees by branch
+      - Employees joined last month by designation
+      - Number of security guards by branch
+
+  # One row per employee's society membership (salary head SCON) with the CURRENT monthly contribution rate.
+  # It is not a month-by-month deduction history (that is payroll, not in this data), so contribution and
+  # member counts are as on today. Checked against the database (tools/draft_area.py):
+  #   - 344,898 rows, one per employee; 97.9% match an employee, the rest drop out of member counts.
+  #   - branch is the branch the membership is recorded under (differs from the employee's current
+  #     branch for about 7,600 rows).
+  #   - join dates include placeholders (1900-01-01), 226 empty and one typo (year 5009); they only
+  #     appear when a question asks for those dates.
+  society:
+    label: Society membership
+    fact: soc
+    time_column: soc.sctyjoindate
+    synonyms: [society, society membership, society members]
+    default_metric: society_contribution
+    metrics:
+      society_contribution:
+        expr: "SUM(CASE WHEN {emp.active} = 1 THEN {soc.sctycontribution} ELSE 0 END)"
+        label: Monthly society contribution
+        format: currency
+        snapshot: true
+        synonyms: [society contribution, society deduction, society amount, society contribution amount,
+                   monthly society contribution, society cutting, society kapat, society]
+      society_members:
+        expr: "SUM(CASE WHEN {emp.active} = 1 THEN 1 ELSE 0 END)"
+        label: Society members
+        format: integer
+        snapshot: true
+        synonyms: [society members, members of society, number of society members, society member count,
+                   employees in society, society sabhasad]
+      avg_society_contribution:
+        expr: "SUM(CASE WHEN {emp.active} = 1 THEN {soc.sctycontribution} ELSE 0 END) / NULLIF(SUM(CASE WHEN {emp.active} = 1 THEN 1 ELSE 0 END), 0)"
+        label: Average society contribution per member
+        format: currency
+        snapshot: true
+        synonyms: [average society contribution, average society deduction, society contribution per member]
+      society_joined:
+        expr: "COUNT(*)"
+        label: Society memberships started
+        format: integer
+        synonyms: [joined society, society joinings, new society members, society enrolment, enrolled in society]
+      society_entrance_fee:
+        expr: "SUM({soc.entrancefee})"
+        label: Society entrance fee
+        format: currency
+        synonyms: [entrance fee, society entrance fee, society joining fee, admission fee]
+    examples:
+      - Society contribution by branch
+      - Society members by department
+      - New society members this financial year
+
+derived_metrics:
+  collection_efficiency:
+    label: Collection %
+    formula: receipt_amount / billing_amount * 100
+    format: percent
+    synonyms: [collection efficiency, collection percentage, collection ratio, recovery percentage,
+               recovery ratio, collection rate]
+    note: "Collection % = amount received ÷ amount billed in the same period × 100."
+  billing_minus_receipts:
+    label: Billed minus received
+    formula: billing_amount - receipt_amount
+    format: currency
+    synonyms: [outstanding, pending collection, pending amount, dues, balance, receivable, receivables,
+               unpaid, gap between billing and collection]
+    note: "Billed minus received is for the chosen period only; it is not the ledger outstanding (opening balances and adjustments are not included)."
+
+# Extra worked examples for the language model: everyday ways of asking that the measure words don't cover.
+# Keep them few and varied; each one makes every model call a little slower.
+llm_examples:
+  "how much payment did we get from parties in march 2025": "measure=receipt_amount | area=receipts | period=March 2025"
+  "pichhle mahine thane branch se kitna paisa jama hua": "measure=receipt_amount | area=receipts | period=last month | filter=branch:thane"
+  "which clients paid us the most this year": "measure=receipt_amount | area=receipts | by=customer | period=this year | sort=desc | limit=10"
+  "how many guards are posted in each department": "measure=active_employees | area=employees | by=department"
+  "how many parties did we bill last month": "measure=count:customer | area=billing | period=last month"
+  "branch wise society kapat kitna hai": "measure=society_contribution | area=society | by=branch"
+
+# Asked often, but this data doesn't hold it: answered with the reason instead of a near-miss figure.
+not_available:
+  attrition: no leaving or exit dates are recorded for employees
+  resign: no leaving or exit dates are recorded for employees
+  left the company: no leaving or exit dates are recorded for employees
+  attendance: attendance is not in this data
+  absent: attendance is not in this data
+  salary: salaries and payroll are not in this data
+  salaries: salaries and payroll are not in this data
+  payroll: salaries and payroll are not in this data
+  profit: costs are not in this data, so profit can't be worked out
+  margin: costs are not in this data, so margin can't be worked out
+  expense: costs are not in this data
+  forecast: only past figures are available, not forecasts
+  predict: only past figures are available, not forecasts

@@ -1,0 +1,1148 @@
+# DRAFT generated from database statistics. Review every table, join, metric and label,
+# then save the reviewed version as packs/<client>/semantic.yaml.
+client: bis
+display_name: BIS
+database:
+  dialect: postgres
+  dsn_env: BIS_DSN
+tables:
+  smtbmemployee:
+    name: public.smtbmemployee
+  smtbmdesignation:
+    name: public.smtbmdesignation
+  smtbmshift:
+    name: public.smtbmshift
+  smtbmgradehdr:
+    name: public.smtbmgradehdr
+  smtbmbranch:
+    name: public.smtbmbranch
+  smtbmdepartment:
+    name: public.smtbmdepartment
+  smtbmbank:
+    name: public.smtbmbank
+  smtbmresource:
+    name: public.smtbmresource
+  smtbmresourcegroup:
+    name: public.smtbmresourcegroup
+  smtbmbankcategory:
+    name: public.smtbmbankcategory
+  smtbgattendancestatus:
+    name: public.smtbgattendancestatus
+  smtbmcompany:
+    name: public.smtbmcompany
+  smtbmcity:
+    name: public.smtbmcity
+  smtbgfinyear:
+    name: public.smtbgfinyear
+  smtbmresourcenew:
+    name: public.smtbmresourcenew
+  smtbmcustbrloc:
+    name: public.smtbmcustbrloc
+  smtbmcustomer:
+    name: public.smtbmcustomer
+  smtbmcustlocgroup:
+    name: public.smtbmcustlocgroup
+  smtbmleaveslab_master:
+    name: public.smtbmleaveslab_master
+  smtbmneftmaster:
+    name: public.smtbmneftmaster
+  smtbmindustry:
+    name: public.smtbmindustry
+  smtbmcustcatagory:
+    name: public.smtbmcustcatagory
+  smtbmstate:
+    name: public.smtbmstate
+  smtbtworkorderhdr:
+    name: public.smtbtworkorderhdr
+  smtbtquotation:
+    name: public.smtbtquotation
+  smtbmratezone:
+    name: public.smtbmratezone
+  smtbtinquiry:
+    name: public.smtbtinquiry
+  smtbmsalaryhead:
+    name: public.smtbmsalaryhead
+  smtbtarrears:
+    name: public.smtbtarrears
+joins:
+- from: smtbmemployee
+  to: smtbmdesignation
+  columns:
+  - - designationid
+    - designationid
+- from: smtbmemployee
+  to: smtbmshift
+  columns:
+  - - shiftid
+    - shiftid
+- from: smtbmemployee
+  to: smtbmgradehdr
+  columns:
+  - - gradeid
+    - gradeid
+- from: smtbmemployee
+  to: smtbmbranch
+  columns:
+  - - branchid
+    - brlocid
+- from: smtbmemployee
+  to: smtbmdepartment
+  columns:
+  - - departmentid
+    - deptid
+- from: smtbmemployee
+  to: smtbmbank
+  columns:
+  - - bankbrid
+    - bankbrid
+- from: smtbmemployee
+  to: smtbmresource
+  columns:
+  - - resourceid
+    - resourceid
+- from: smtbmemployee
+  to: smtbmresourcegroup
+  columns:
+  - - resourcegroupprintid
+    - resourcegroupprintid
+- from: smtbmemployee
+  to: smtbmbankcategory
+  columns:
+  - - bankcategoryid
+    - bankcategoryid
+- from: smtbmshift
+  to: smtbgattendancestatus
+  columns:
+  - - attstatusid
+    - attstatusid
+- from: smtbmgradehdr
+  to: smtbmresource
+  columns:
+  - - resourceid
+    - resourceid
+- from: smtbmbranch
+  to: smtbmcompany
+  columns:
+  - - companyid
+    - companyid
+- from: smtbmbranch
+  to: smtbmcity
+  columns:
+  - - cityid
+    - cityid
+- from: smtbmbranch
+  to: smtbgfinyear
+  columns:
+  - - finyearid
+    - finyearid
+- from: smtbmbank
+  to: smtbmcity
+  columns:
+  - - cityid
+    - cityid
+- from: smtbmresource
+  to: smtbmresourcegroup
+  columns:
+  - - resourcegroupprintid
+    - resourcegroupprintid
+- from: smtbmresource
+  to: smtbmresourcenew
+  columns:
+  - - resourcenewid
+    - resourceid
+- from: smtbmbankcategory
+  to: smtbmbank
+  columns:
+  - - bankbrid
+    - bankbrid
+- from: smtbmcustbrloc
+  to: smtbmcustomer
+  columns:
+  - - customerid
+    - customerid
+- from: smtbmcustbrloc
+  to: smtbmcustlocgroup
+  columns:
+  - - custlocgroupid
+    - custlocgroupid
+- from: smtbmcustbrloc
+  to: smtbmcity
+  columns:
+  - - cityid
+    - cityid
+- from: smtbmcustbrloc
+  to: smtbmbranch
+  columns:
+  - - brlocid
+    - brlocid
+- from: smtbmcustbrloc
+  to: smtbmleaveslab_master
+  columns:
+  - - leave_slab_id
+    - leave_slab_id
+- from: smtbmcustbrloc
+  to: smtbmneftmaster
+  columns:
+  - - neftmasterid
+    - neftmasterid
+- from: smtbmcustomer
+  to: smtbmindustry
+  columns:
+  - - industryid
+    - industryid
+- from: smtbmcustomer
+  to: smtbmbranch
+  columns:
+  - - brlocid
+    - brlocid
+- from: smtbmcustomer
+  to: smtbmcity
+  columns:
+  - - cityid
+    - cityid
+- from: smtbmcustomer
+  to: smtbmcustcatagory
+  columns:
+  - - catagoryid
+    - catagoryid
+- from: smtbmcustlocgroup
+  to: smtbmbranch
+  columns:
+  - - brlocid
+    - brlocid
+- from: smtbmcity
+  to: smtbmstate
+  columns:
+  - - stateid
+    - stateid
+- from: smtbmleaveslab_master
+  to: smtbmcustbrloc
+  columns:
+  - - custbrlocid
+    - custbrlocid
+- from: smtbtworkorderhdr
+  to: smtbgfinyear
+  columns:
+  - - finyearid
+    - finyearid
+- from: smtbtworkorderhdr
+  to: smtbmbranch
+  columns:
+  - - brlocid
+    - brlocid
+- from: smtbtworkorderhdr
+  to: smtbtquotation
+  columns:
+  - - quotationid
+    - quotationid
+- from: smtbtworkorderhdr
+  to: smtbmcustomer
+  columns:
+  - - customerid
+    - customerid
+- from: smtbtworkorderhdr
+  to: smtbmcustbrloc
+  columns:
+  - - custbrlocid
+    - custbrlocid
+- from: smtbtworkorderhdr
+  to: smtbmratezone
+  columns:
+  - - ratezoneid
+    - ratezoneid
+- from: smtbtquotation
+  to: smtbmbranch
+  columns:
+  - - brlocid
+    - brlocid
+- from: smtbtquotation
+  to: smtbtinquiry
+  columns:
+  - - inquiryid
+    - inquiryid
+- from: smtbtquotation
+  to: smtbmcustomer
+  columns:
+  - - customerid
+    - customerid
+- from: smtbtquotation
+  to: smtbmcustbrloc
+  columns:
+  - - custbrlocid
+    - custbrlocid
+- from: smtbtquotation
+  to: smtbmstate
+  columns:
+  - - stateid
+    - stateid
+- from: smtbtquotation
+  to: smtbmratezone
+  columns:
+  - - ratezoneid
+    - ratezoneid
+- from: smtbmratezone
+  to: smtbmstate
+  columns:
+  - - stateid
+    - stateid
+- from: smtbmsalaryhead
+  to: smtbmgradehdr
+  columns:
+  - - gradeid
+    - gradeid
+- from: smtbtarrears
+  to: smtbmbranch
+  columns:
+  - - brlocid
+    - brlocid
+- from: smtbtarrears
+  to: smtbmcustomer
+  columns:
+  - - customerid
+    - customerid
+- from: smtbtarrears
+  to: smtbmcustbrloc
+  columns:
+  - - custbrlocid
+    - custbrlocid
+- from: smtbtarrears
+  to: smtbmresource
+  columns:
+  - - resourceid
+    - resourceid
+- from: smtbtarrears
+  to: smtbmemployee
+  columns:
+  - - empid
+    - empid
+- from: smtbtarrears
+  to: smtbmcompany
+  columns:
+  - - companyid
+    - companyid
+dimensions:
+  smtbmemployee_editmachno:
+    column: smtbmemployee.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmemployee_ubs:
+    column: smtbmemployee.ubs
+    label: Ubs
+    synonyms:
+    - ubs
+    load_values: true
+  smtbmdesignation_usercreated:
+    column: smtbmdesignation.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmdesignation_userlastmod:
+    column: smtbmdesignation.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmdesignation_addmachno:
+    column: smtbmdesignation.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmdesignation_editmachno:
+    column: smtbmdesignation.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmgradehdr_usercreated:
+    column: smtbmgradehdr.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmgradehdr_userlastmod:
+    column: smtbmgradehdr.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmgradehdr_addmachno:
+    column: smtbmgradehdr.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmgradehdr_editmachno:
+    column: smtbmgradehdr.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmbranch_brlocname:
+    column: smtbmbranch.brlocname
+    label: Brlocname
+    synonyms:
+    - brlocname
+    load_values: true
+  smtbmbranch_telno:
+    column: smtbmbranch.telno
+    label: Telno
+    synonyms:
+    - telno
+    load_values: true
+  smtbmbranch_faxno:
+    column: smtbmbranch.faxno
+    label: Faxno
+    synonyms:
+    - faxno
+    load_values: true
+  smtbmbranch_usercreated:
+    column: smtbmbranch.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmbranch_userlastmod:
+    column: smtbmbranch.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmbranch_addmachno:
+    column: smtbmbranch.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmbranch_editmachno:
+    column: smtbmbranch.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmbranch_attstafftimelock:
+    column: smtbmbranch.attstafftimelock
+    label: Attstafftimelock
+    synonyms:
+    - attstafftimelock
+    load_values: true
+  smtbmbranch_brgstinno:
+    column: smtbmbranch.brgstinno
+    label: Brgstinno
+    synonyms:
+    - brgstinno
+    load_values: true
+  smtbmbranch_tcompanyname:
+    column: smtbmbranch.tcompanyname
+    label: Tcompanyname
+    synonyms:
+    - tcompanyname
+    load_values: true
+  smtbmdepartment_deptname:
+    column: smtbmdepartment.deptname
+    label: Deptname
+    synonyms:
+    - deptname
+    load_values: true
+  smtbmdepartment_usercreated:
+    column: smtbmdepartment.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmdepartment_userlastmod:
+    column: smtbmdepartment.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmdepartment_addmachno:
+    column: smtbmdepartment.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmdepartment_editmachno:
+    column: smtbmdepartment.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmbank_faxno:
+    column: smtbmbank.faxno
+    label: Faxno
+    synonyms:
+    - faxno
+    load_values: true
+  smtbmbank_usercreated:
+    column: smtbmbank.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmbank_userlastmod:
+    column: smtbmbank.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmbank_editmachno:
+    column: smtbmbank.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmresource_resourcecodeprint:
+    column: smtbmresource.resourcecodeprint
+    label: Resourcecodeprint
+    synonyms:
+    - resourcecodeprint
+    load_values: true
+  smtbmresource_usercreated:
+    column: smtbmresource.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmresource_userlastmod:
+    column: smtbmresource.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmresource_addmachno:
+    column: smtbmresource.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmresource_editmachno:
+    column: smtbmresource.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmresourcegroup_usercreated:
+    column: smtbmresourcegroup.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmresourcegroup_userlastmod:
+    column: smtbmresourcegroup.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmresourcegroup_addmachno:
+    column: smtbmresourcegroup.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmresourcegroup_editmachno:
+    column: smtbmresourcegroup.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmbankcategory_bankcategoryname:
+    column: smtbmbankcategory.bankcategoryname
+    label: Bankcategoryname
+    synonyms:
+    - bankcategoryname
+    load_values: true
+  smtbmbankcategory_usercreated:
+    column: smtbmbankcategory.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmbankcategory_userlastmod:
+    column: smtbmbankcategory.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmbankcategory_addmachno:
+    column: smtbmbankcategory.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmbankcategory_editmachno:
+    column: smtbmbankcategory.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbgattendancestatus_usercreated:
+    column: smtbgattendancestatus.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbgattendancestatus_userlastmod:
+    column: smtbgattendancestatus.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbgattendancestatus_addmachno:
+    column: smtbgattendancestatus.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbgattendancestatus_editmachno:
+    column: smtbgattendancestatus.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmcity_usercreated:
+    column: smtbmcity.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmcity_userlastmod:
+    column: smtbmcity.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmcity_addmachno:
+    column: smtbmcity.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmcity_editmachno:
+    column: smtbmcity.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmresourcenew_usercreated:
+    column: smtbmresourcenew.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmresourcenew_userlastmod:
+    column: smtbmresourcenew.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmcustbrloc_faxno:
+    column: smtbmcustbrloc.faxno
+    label: Faxno
+    synonyms:
+    - faxno
+    load_values: true
+  smtbmcustbrloc_stntfno:
+    column: smtbmcustbrloc.stntfno
+    label: Stntfno
+    synonyms:
+    - stntfno
+    load_values: true
+  smtbmcustbrloc_usercreated:
+    column: smtbmcustbrloc.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmcustbrloc_userlastmod:
+    column: smtbmcustbrloc.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmcustbrloc_branchflag:
+    column: smtbmcustbrloc.branchflag
+    label: Branchflag
+    synonyms:
+    - branchflag
+    load_values: true
+  smtbmcustbrloc_custbankaccno:
+    column: smtbmcustbrloc.custbankaccno
+    label: Custbankaccno
+    synonyms:
+    - custbankaccno
+    load_values: true
+  smtbmcustomer_faxno:
+    column: smtbmcustomer.faxno
+    label: Faxno
+    synonyms:
+    - faxno
+    load_values: true
+  smtbmcustomer_usercreated:
+    column: smtbmcustomer.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmcustomer_userlastmod:
+    column: smtbmcustomer.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmindustry_industryname:
+    column: smtbmindustry.industryname
+    label: Industryname
+    synonyms:
+    - industryname
+    load_values: true
+  smtbmindustry_usercreated:
+    column: smtbmindustry.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmindustry_userlastmod:
+    column: smtbmindustry.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmindustry_addmachno:
+    column: smtbmindustry.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmindustry_editmachno:
+    column: smtbmindustry.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbtworkorderhdr_woattachment:
+    column: smtbtworkorderhdr.woattachment
+    label: Woattachment
+    synonyms:
+    - woattachment
+    load_values: true
+  smtbtworkorderhdr_usercreated:
+    column: smtbtworkorderhdr.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbtworkorderhdr_userlastmod:
+    column: smtbtworkorderhdr.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbtworkorderhdr_addmachno:
+    column: smtbtworkorderhdr.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbtworkorderhdr_editmachno:
+    column: smtbtworkorderhdr.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbtquotation_custrequirement:
+    column: smtbtquotation.custrequirement
+    label: Custrequirement
+    synonyms:
+    - custrequirement
+    load_values: true
+  smtbtquotation_usercreated:
+    column: smtbtquotation.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbtquotation_userlastmod:
+    column: smtbtquotation.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbtquotation_addmachno:
+    column: smtbtquotation.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbtquotation_editmachno:
+    column: smtbtquotation.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbmratezone_ratezonename:
+    column: smtbmratezone.ratezonename
+    label: Ratezonename
+    synonyms:
+    - ratezonename
+    load_values: true
+  smtbmratezone_usercreated:
+    column: smtbmratezone.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmratezone_userlastmod:
+    column: smtbmratezone.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmratezone_addmachno:
+    column: smtbmratezone.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmratezone_editmachno:
+    column: smtbmratezone.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbtinquiry_faxno:
+    column: smtbtinquiry.faxno
+    label: Faxno
+    synonyms:
+    - faxno
+    load_values: true
+  smtbtinquiry_referenceperson:
+    column: smtbtinquiry.referenceperson
+    label: Referenceperson
+    synonyms:
+    - referenceperson
+    load_values: true
+  smtbtinquiry_usercreated:
+    column: smtbtinquiry.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbtinquiry_userlastmod:
+    column: smtbtinquiry.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmsalaryhead_salaryheadname:
+    column: smtbmsalaryhead.salaryheadname
+    label: Salaryheadname
+    synonyms:
+    - salaryheadname
+    load_values: true
+  smtbmsalaryhead_salaryheadprintdesc:
+    column: smtbmsalaryhead.salaryheadprintdesc
+    label: Salaryheadprintdesc
+    synonyms:
+    - salaryheadprintdesc
+    load_values: true
+  smtbmsalaryhead_usercreated:
+    column: smtbmsalaryhead.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbmsalaryhead_userlastmod:
+    column: smtbmsalaryhead.userlastmod
+    label: Userlastmod
+    synonyms:
+    - userlastmod
+    load_values: true
+  smtbmsalaryhead_addmachno:
+    column: smtbmsalaryhead.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+  smtbmsalaryhead_editmachno:
+    column: smtbmsalaryhead.editmachno
+    label: Editmachno
+    synonyms:
+    - editmachno
+    load_values: true
+  smtbtarrears_usercreated:
+    column: smtbtarrears.usercreated
+    label: Usercreated
+    synonyms:
+    - usercreated
+    load_values: true
+  smtbtarrears_addmachno:
+    column: smtbtarrears.addmachno
+    label: Addmachno
+    synonyms:
+    - addmachno
+    load_values: true
+areas:
+  smtbmemployee:
+    label: Smtbmemployee
+    fact: smtbmemployee
+    time_column: smtbmemployee.dateofbirth
+    synonyms:
+    - smtbmemployee
+    default_metric: smtbmemployee_count
+    metrics:
+      smtbmemployee_count:
+        expr: COUNT(*)
+        label: Number of smtbmemployee
+        format: integer
+        synonyms:
+        - smtbmemployee
+        - count
+      smtbmemployee_height:
+        expr: SUM({smtbmemployee.height})
+        label: Total height
+        format: number
+        synonyms:
+        - height
+      smtbmemployee_weight:
+        expr: SUM({smtbmemployee.weight})
+        label: Total weight
+        format: number
+        synonyms:
+        - weight
+      smtbmemployee_chest:
+        expr: SUM({smtbmemployee.chest})
+        label: Total chest
+        format: number
+        synonyms:
+        - chest
+      smtbmemployee_noticerecoverdays:
+        expr: SUM({smtbmemployee.noticerecoverdays})
+        label: Total noticerecoverdays
+        format: number
+        synonyms:
+        - noticerecoverdays
+      smtbmemployee_sdcash:
+        expr: SUM({smtbmemployee.sdcash})
+        label: Total sdcash
+        format: number
+        synonyms:
+        - sdcash
+    examples: []
+  smtbmcustbrloc:
+    label: Smtbmcustbrloc
+    fact: smtbmcustbrloc
+    time_column: smtbmcustbrloc.datecreated
+    synonyms:
+    - smtbmcustbrloc
+    default_metric: smtbmcustbrloc_count
+    metrics:
+      smtbmcustbrloc_count:
+        expr: COUNT(*)
+        label: Number of smtbmcustbrloc
+        format: integer
+        synonyms:
+        - smtbmcustbrloc
+        - count
+      smtbmcustbrloc_isservicetaxexempted:
+        expr: SUM({smtbmcustbrloc.isservicetaxexempted})
+        label: Total isservicetaxexempted
+        format: number
+        synonyms:
+        - isservicetaxexempted
+      smtbmcustbrloc_bper:
+        expr: SUM({smtbmcustbrloc.bper})
+        label: Total bper
+        format: number
+        synonyms:
+        - bper
+      smtbmcustbrloc_lper:
+        expr: SUM({smtbmcustbrloc.lper})
+        label: Total lper
+        format: number
+        synonyms:
+        - lper
+      smtbmcustbrloc_bceiling:
+        expr: SUM({smtbmcustbrloc.bceiling})
+        label: Total bceiling
+        format: number
+        synonyms:
+        - bceiling
+      smtbmcustbrloc_leavedivby:
+        expr: SUM({smtbmcustbrloc.leavedivby})
+        label: Total leavedivby
+        format: number
+        synonyms:
+        - leavedivby
+      smtbmcustbrloc_principalrtamount:
+        expr: SUM({smtbmcustbrloc.principalrtamount})
+        label: Total principalrtamount
+        format: number
+        synonyms:
+        - principalrtamount
+    examples: []
+  smtbmcustomer:
+    label: Smtbmcustomer
+    fact: smtbmcustomer
+    time_column: smtbmcustomer.datecreated
+    synonyms:
+    - smtbmcustomer
+    default_metric: smtbmcustomer_count
+    metrics:
+      smtbmcustomer_count:
+        expr: COUNT(*)
+        label: Number of smtbmcustomer
+        format: integer
+        synonyms:
+        - smtbmcustomer
+        - count
+      smtbmcustomer_billsharepercent:
+        expr: SUM({smtbmcustomer.billsharepercent})
+        label: Total billsharepercent
+        format: number
+        synonyms:
+        - billsharepercent
+    examples: []
+  smtbtworkorderhdr:
+    label: Smtbtworkorderhdr
+    fact: smtbtworkorderhdr
+    time_column: smtbtworkorderhdr.wodate
+    synonyms:
+    - smtbtworkorderhdr
+    default_metric: smtbtworkorderhdr_count
+    metrics:
+      smtbtworkorderhdr_count:
+        expr: COUNT(*)
+        label: Number of smtbtworkorderhdr
+        format: integer
+        synonyms:
+        - smtbtworkorderhdr
+        - count
+      smtbtworkorderhdr_relieverrate:
+        expr: SUM({smtbtworkorderhdr.relieverrate})
+        label: Total relieverrate
+        format: number
+        synonyms:
+        - relieverrate
+      smtbtworkorderhdr_servicerate:
+        expr: SUM({smtbtworkorderhdr.servicerate})
+        label: Total servicerate
+        format: number
+        synonyms:
+        - servicerate
+      smtbtworkorderhdr_servicetaxrate:
+        expr: SUM({smtbtworkorderhdr.servicetaxrate})
+        label: Total servicetaxrate
+        format: number
+        synonyms:
+        - servicetaxrate
+    examples: []
+  smtbmbank:
+    label: Smtbmbank
+    fact: smtbmbank
+    time_column: smtbmbank.datecreated
+    synonyms:
+    - smtbmbank
+    default_metric: smtbmbank_count
+    metrics:
+      smtbmbank_count:
+        expr: COUNT(*)
+        label: Number of smtbmbank
+        format: integer
+        synonyms:
+        - smtbmbank
+        - count
+      smtbmbank_issalaryaccount:
+        expr: SUM({smtbmbank.issalaryaccount})
+        label: Total issalaryaccount
+        format: number
+        synonyms:
+        - issalaryaccount
+      smtbmbank_dedamt:
+        expr: SUM({smtbmbank.dedamt})
+        label: Total dedamt
+        format: number
+        synonyms:
+        - dedamt
+    examples: []
+  smtbmsalaryhead:
+    label: Smtbmsalaryhead
+    fact: smtbmsalaryhead
+    time_column: smtbmsalaryhead.datecreated
+    synonyms:
+    - smtbmsalaryhead
+    default_metric: smtbmsalaryhead_count
+    metrics:
+      smtbmsalaryhead_count:
+        expr: COUNT(*)
+        label: Number of smtbmsalaryhead
+        format: integer
+        synonyms:
+        - smtbmsalaryhead
+        - count
+      smtbmsalaryhead_rate:
+        expr: SUM({smtbmsalaryhead.rate})
+        label: Total rate
+        format: number
+        synonyms:
+        - rate
+      smtbmsalaryhead_amount:
+        expr: SUM({smtbmsalaryhead.amount})
+        label: Total amount
+        format: number
+        synonyms:
+        - amount
+      smtbmsalaryhead_maxlimit:
+        expr: SUM({smtbmsalaryhead.maxlimit})
+        label: Total maxlimit
+        format: number
+        synonyms:
+        - maxlimit
+    examples: []
+  smtbtarrears:
+    label: Smtbtarrears
+    fact: smtbtarrears
+    time_column: smtbtarrears.transdate
+    synonyms:
+    - smtbtarrears
+    default_metric: smtbtarrears_count
+    metrics:
+      smtbtarrears_count:
+        expr: COUNT(*)
+        label: Number of smtbtarrears
+        format: integer
+        synonyms:
+        - smtbtarrears
+        - count
+      smtbtarrears_wptax:
+        expr: SUM({smtbtarrears.wptax})
+        label: Total wptax
+        format: number
+        synonyms:
+        - wptax
+    examples: []
+  smtbmcompany:
+    label: Smtbmcompany
+    fact: smtbmcompany
+    time_column: smtbmcompany.datecreated
+    synonyms:
+    - smtbmcompany
+    default_metric: smtbmcompany_count
+    metrics:
+      smtbmcompany_count:
+        expr: COUNT(*)
+        label: Number of smtbmcompany
+        format: integer
+        synonyms:
+        - smtbmcompany
+        - count
+      smtbmcompany_tcharges:
+        expr: SUM({smtbmcompany.tcharges})
+        label: Total tcharges
+        format: number
+        synonyms:
+        - tcharges
+    examples: []

@@ -1,0 +1,51 @@
+# DRAFT area for public.smtbtsociety. Fill in every TODO, check the report, then paste each block
+# into the matching section of packs/bis/semantic.yaml.
+tables:
+  soc:
+    name: public.smtbtsociety
+joins:
+- from: soc
+  to: br
+  columns:
+  - - brlocid
+    - brlocid
+- from: soc
+  to: emp
+  columns:
+  - - empid
+    - empid
+areas:
+  soc:
+    label: TODO Smtbtsociety
+    fact: soc
+    synonyms:
+    - TODO
+    default_metric: soc_count
+    metrics:
+      soc_count:
+        expr: COUNT(*)
+        label: Number of smtbtsociety rows
+        format: integer
+        synonyms:
+        - TODO
+      soc_entrancefee:
+        expr: SUM({soc.entrancefee})
+        label: Entrancefee
+        format: number
+        synonyms:
+        - TODO
+      soc_miscexpense:
+        expr: SUM({soc.miscexpense})
+        label: Miscexpense
+        format: number
+        synonyms:
+        - TODO
+      soc_sctycontribution:
+        expr: SUM({soc.sctycontribution})
+        label: Sctycontribution
+        format: number
+        synonyms:
+        - TODO
+    examples:
+    - TODO
+    time_column: soc.wefdate

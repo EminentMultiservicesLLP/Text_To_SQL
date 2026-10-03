@@ -1,0 +1,233 @@
+﻿# Client pack: Bellona (Rista POS sales on SQL Server).
+# Everything the engine knows about this client is in this file. Review with someone who knows the business.
+# TO VERIFY with the client: the Status value for cancelled bills, the one-to-one joins below, and branch_regions.
+
+client: bellona_rista
+display_name: Bellona Restaurants
+
+database:
+  dialect: tsql
+  dsn_env: BELLONA_RISTA_DSN
+
+formatting:
+  currency_symbol: "₹"
+  indian_grouping: true
+
+tables:
+  inv:   { name: dbo.Rista_SaleInvoices }
+  item:  { name: dbo.Rista_SaleItems }
+  pay:   { name: dbo.Rista_SalePayments }
+  cust:  { name: dbo.Rista_SaleCustomers }
+  deliv: { name: dbo.Rista_SaleDelivery }
+  src:   { name: dbo.Rista_SaleSourceInfo }
+
+# Each join says: many rows of `from` point at one row of `to`. one_to_one joins can be used both ways.
+joins:
+  - { from: item,  to: inv, columns: [[InvoiceID, InvoiceID]] }
+  - { from: pay,   to: inv, columns: [[InvoiceID, InvoiceID]] }
+  - { from: cust,  to: inv, columns: [[InvoiceID, InvoiceID]], one_to_one: true }
+  - { from: deliv, to: inv, columns: [[InvoiceID, InvoiceID]], one_to_one: true }
+  - { from: src,   to: inv, columns: [[InvoiceID, InvoiceID]], one_to_one: true }
+
+dimensions:
+  branch:
+    column: inv.branchCode
+    label: Branch
+    synonyms: [branch, outlet, store, restaurant, shop, location, unit]
+    load_values: true
+    groups:
+      # Placeholder codes copied from the old business_context.json. Replace with real branchCode values.
+      pune: [PUNE001, PUNE002, PUNE003]
+      mumbai: [MUM001, MUM002, MUM003, MUM004]
+      delhi: [DEL001, DEL002]
+      bangalore: [BLR001, BLR002, BLR003]
+      north region: [DEL001, DEL002, LKW001]
+      south region: [BLR001, BLR002, CHN001]
+      west region: [MUM001, MUM002, MUM003, MUM004, PUNE001, PUNE002, PUNE003]
+  channel:
+    column: inv.Channel
+    label: Channel
+    synonyms: [channel, sales channel]
+    load_values: true
+  delivery_mode:
+    column: inv.DeliveryMode
+    label: Order type
+    synonyms: [delivery mode, order type, service type, order mode]
+    load_values: true
+  invoice_type:
+    column: inv.InvoiceType
+    label: Invoice type
+    synonyms: [invoice type, bill type]
+    load_values: true
+  status:
+    column: inv.Status
+    label: Status
+    synonyms: [status, bill status, invoice status]
+    load_values: true
+  session:
+    column: inv.SessionLabel
+    label: Session
+    synonyms: [session, shift, meal period, daypart]
+    load_values: true
+  source:
+    column: src.Source
+    label: Order source
+    synonyms: [source, order source, aggregator, platform]
+    load_values: true
+  city:
+    column: deliv.City
+    label: Delivery city
+    synonyms: [city, delivery city]
+    load_values: true
+  item:
+    column: item.LongName
+    label: Item
+    synonyms: [item, dish, product, menu item, sku]
+    load_values: true
+  category:
+    column: item.CategoryName
+    label: Category
+    synonyms: [category, menu category, item category]
+    load_values: true
+  subcategory:
+    column: item.SubCategoryName
+    label: Sub-category
+    synonyms: [subcategory, sub category, sub-category]
+    load_values: true
+  brand:
+    column: item.BrandName
+    label: Brand
+    synonyms: [brand]
+    load_values: true
+  payment_mode:
+    column: pay.Mode
+    label: Payment mode
+    synonyms: [payment mode, payment method, payment type, mode of payment, tender, tender type]
+    load_values: true
+  payment_submode:
+    column: pay.SubMode
+    label: Payment sub-mode
+    synonyms: [payment submode, payment sub mode, sub mode]
+    load_values: true
+
+areas:
+  sales:
+    label: Sales (bills)
+    fact: inv
+    time_column: inv.InvoiceDate
+    time_filter_on_date: true   # InvoiceDate is datetimeoffset
+    synonyms: [bill, bills, invoice, invoices]
+    default_metric: revenue
+    default_filters:
+      - { column: inv.Status, op: neq, value: Cancelled }
+    metrics:
+      revenue:
+        expr: "SUM({inv.TotalAmount})"
+        label: Total sales
+        format: currency
+        synonyms: [sales, sale, revenue, total sales, turnover, business, total amount, earnings, income]
+      net_sales:
+        expr: "SUM({inv.NetAmount})"
+        label: Net sales
+        format: currency
+        synonyms: [net sales, net revenue, net amount, net, earnings, income]
+      gross_sales:
+        expr: "SUM({inv.GrossAmount})"
+        label: Gross sales
+        format: currency
+        synonyms: [gross sales, gross revenue, gross amount, gross]
+      orders:
+        expr: "COUNT(DISTINCT {inv.InvoiceID})"
+        label: Orders
+        format: integer
+        synonyms: [orders, order, order count, number of orders, bill count, number of bills, transactions]
+      avg_order_value:
+        expr: "AVG({inv.TotalAmount})"
+        label: Average order value
+        format: currency
+        synonyms: [average order value, aov, average bill, avg bill, average bill value, ticket size, average ticket]
+      discount:
+        expr: "SUM({inv.TotalDiscountAmount})"
+        label: Discount
+        format: currency
+        synonyms: [discount, discounts, total discount]
+      guests:
+        expr: "SUM({inv.PersonCount})"
+        label: Guests
+        format: integer
+        synonyms: [guests, covers, pax, footfall, people, persons]
+      tips:
+        expr: "SUM({inv.TipAmount})"
+        label: Tips
+        format: currency
+        synonyms: [tips, tip]
+      tax:
+        expr: "SUM(COALESCE({inv.TaxAmountIncluded}, 0) + COALESCE({inv.TaxAmountExcluded}, 0))"
+        label: Tax
+        format: currency
+        synonyms: [tax, taxes, gst]
+    examples:
+      - What were total sales today?
+      - Which branch had the highest sales this month?
+      - Hourly sales trend for yesterday
+      - Orders by order type last week
+      - pichhle mahine ki bikri har branch
+
+  items:
+    label: Items sold
+    fact: item
+    time_column: inv.InvoiceDate
+    time_filter_on_date: true   # InvoiceDate is datetimeoffset
+    synonyms: [items sold, menu]
+    default_metric: item_sales
+    default_filters:
+      - { column: inv.Status, op: neq, value: Cancelled }
+    metrics:
+      quantity:
+        expr: "SUM({item.Quantity})"
+        label: Quantity sold
+        format: integer
+        synonyms: [quantity, qty, units, units sold, items sold, pieces, quantity sold]
+      item_sales:
+        expr: "SUM({item.ItemTotalAmount})"
+        label: Item sales
+        format: currency
+        synonyms: [sales, sale, revenue, item sales, item revenue, earnings, income]
+      item_orders:
+        expr: "COUNT(DISTINCT {item.InvoiceID})"
+        label: Orders
+        format: integer
+        synonyms: [orders, order, number of orders]
+      item_cost:
+        expr: "SUM({item.ItemCost})"
+        label: Item cost
+        format: currency
+        synonyms: [cost, item cost, food cost]
+    examples:
+      - Top 10 best selling items this month
+      - Sales by category last month
+      - Quantity sold by item for Beverages today
+
+  payments:
+    label: Payments
+    fact: pay
+    time_column: inv.InvoiceDate
+    time_filter_on_date: true   # InvoiceDate is datetimeoffset
+    synonyms: [payment, payments, collection, collections]
+    default_metric: payment_amount
+    default_filters:
+      - { column: inv.Status, op: neq, value: Cancelled }
+    metrics:
+      payment_amount:
+        expr: "SUM({pay.Amount})"
+        label: Amount collected
+        format: currency
+        synonyms: [amount collected, collection, collections, payments, paid, sales, revenue]
+      payment_count:
+        expr: "COUNT(*)"
+        label: Number of payments
+        format: integer
+        synonyms: [number of payments, payment count, transactions]
+    examples:
+      - Revenue breakdown by payment mode this month
+      - Collections by payment mode yesterday

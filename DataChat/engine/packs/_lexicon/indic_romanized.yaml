@@ -1,0 +1,126 @@
+# Shared word list: Hindi and Marathi written in English letters, plus common English phrasing.
+# Keys are what users type (lowercase). Values are the plain-English words the parser understands.
+# Longer phrases are replaced before single words. Spelling variants close to a key (e.g. "pichhley")
+# are matched automatically, so only add genuinely different words.
+
+replacements:
+  # ── time ────────────────────────────────────────────────────────────────
+  aaj: today
+  aj: today
+  aajcha: today
+  aajchi: today
+  kal: yesterday          # past-tense questions only; data questions are about the past
+  kaal: yesterday
+  kalcha: yesterday
+  kalchi: yesterday
+  parso: day before yesterday
+  parva: day before yesterday
+  hafta: week
+  hafte: week
+  hapta: week
+  aathavda: week
+  aathavdyat: week
+  mahina: month
+  mahine: month
+  mahino: month
+  mahinyat: month
+  mahinya: month
+  mahinyachi: month
+  saal: year
+  sal: year
+  varsh: year
+  varsha: year
+  varshi: year
+  pichhle: last
+  pichle: last
+  pichla: last
+  pichhla: last
+  pichli: last
+  pichhli: last
+  gaya: last
+  gaye: last
+  magil: last
+  magchya: last
+  maagchya: last
+  magcha: last
+  gelya: last
+  is mahine: this month
+  iss mahine: this month
+  ya mahinyat: this month
+  hya mahinyat: this month
+  is saal: this year
+  iss saal: this year
+  ya varshi: this year
+  is hafte: this week
+  iss hafte: this week
+  ya aathavdyat: this week
+  ghanta: hour
+  ghante: hour
+  tas: hour
+  taas: hour
+  din: day
+  divas: day
+  diwas: day
+  roz: daily
+  roj: daily
+  rozana: daily
+  dainik: daily
+  saptahik: weekly
+  masik: monthly
+  varshik: yearly
+
+  # ── ranking and grouping ────────────────────────────────────────────────
+  sabse zyada: highest
+  sabse jyada: highest
+  sabse adhik: highest
+  sagalyat jast: highest
+  sarvat jast: highest
+  sabse kam: lowest
+  sagalyat kami: lowest
+  sarvat kami: lowest
+  best selling: highest quantity
+  best-selling: highest quantity
+  top selling: highest quantity
+  most sold: highest quantity
+  least sold: lowest quantity
+  worst selling: lowest quantity
+  har: each
+  pratyek: each
+  prati: per
+  wise: wise
+  anusar: wise
+  pramane: wise
+
+  # ── business words ──────────────────────────────────────────────────────
+  bikri: sales
+  bikree: sales
+  vikri: sales
+  vikree: sales
+  kamai: earnings
+  kamaai: earnings
+  kamayi: earnings
+  dukan: branch
+  dukaan: branch
+  shakha: branch
+  shaakha: branch
+  grahak: customer
+  nakad: cash
+  order kiti: orders
+  kitne order: orders
+
+  # ── question words (mapped so they are treated as filler) ─────────────
+  kitna: how much
+  kitni: how much
+  kitne: how many
+  kiti: how much
+  kevdha: how much
+  kevdhi: how much
+  dikhao: show
+  dikha: show
+  batao: show
+  bata: show
+  dakhva: show
+  dakhav: show
+  sanga: show
+  chahiye: show
+  pahije: show
