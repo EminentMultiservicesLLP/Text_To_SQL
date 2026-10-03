@@ -1,0 +1,25 @@
+# Failed questions from 2026-09-03: fill in expect, then copy into scenarios/bis.yaml
+scenarios:
+  - { id: F001, group: Feedback, ask: "active employees by state", expect: { type: answer } }  # could not answer; read as: I can't combine 'active employees' with State; they come from different parts of
+  - { id: F002, group: Feedback, ask: "can you tell my which all branches earns more than 2cr in last month", expect: { type: answer } }  # could not answer; read as: Those measures come from different parts of the data. Please ask about them sepa
+  - { id: F003, group: Feedback, ask: "may i know the collection of lucknow branch for last year Dec month", expect: { type: answer } }  # could not answer; read as: Those measures come from different parts of the data. Please ask about them sepa
+  - { id: F004, group: Feedback, ask: "recovery collected by Mumbai branch for June 2026", expect: { type: answer } }  # could not answer; read as: Those measures come from different parts of the data. Please ask about them sepa
+  - { id: F005, group: Feedback, ask: "which all branch billing is more than 2 crore in last 3 month", expect: { type: answer } }  # could not answer; read as: Those measures come from different parts of the data. Please ask about them sepa
+  - { id: F006, group: Feedback, ask: "only top 5", expect: { type: answer } }  # could not answer; read as: Those measures come from different parts of the data. Please ask about them sepa
+  - { id: F007, group: Feedback, ask: "employee attendance today", expect: { type: answer } }  # could not answer; read as: I can't answer that from the available data: no attendance data Try something li
+  - { id: F008, group: Feedback, ask: "employee attrition last month", expect: { type: answer } }  # could not answer; read as: I can't answer that from this data: no leaving or exit dates are recorded for em
+  - { id: F009, group: Feedback, ask: "salary of security guards", expect: { type: answer } }  # could not answer; read as: I can't answer that from this data: salaries and payroll are not in this data. T
+  - { id: F010, group: Feedback, ask: "profit by branch this year", expect: { type: answer } }  # could not answer; read as: I can't answer that from this data: costs are not in this data, so profit can't 
+  - { id: F011, group: Feedback, ask: "billing pune last month", expect: { type: answer } }  # asked to clarify, user gave up; read as: 'pune' appears in more than one field. Which one do you mean?
+  - { id: F012, group: Feedback, ask: "headcount pune", expect: { type: answer } }  # asked to clarify, user gave up; read as: 'pune' matches more than one branch. Which one do you mean?
+  - { id: F013, group: Feedback, ask: "sales xyzzy branch last month", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'xyzzy'. If it doesn't matter for this question, choose Ig
+  - { id: F014, group: Feedback, ask: "can you tell me which all branch billing is more than 2 crore in last 3 month", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'more'. What does it mean here?
+  - { id: F015, group: Feedback, ask: "july 2026 madhe 50 lakh peksha jast collection asnare customers", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'asnare'. If it doesn't matter for this question, choose I
+  - { id: F016, group: Feedback, ask: "can you tell me which top 5 branch awared highest billing in May 2026", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'awared'. If it doesn't matter for this question, choose I
+  - { id: F017, group: Feedback, ask: "billing for pune in june 2026", expect: { type: answer } }  # asked to clarify, user gave up; read as: 'pune' matches more than one field. Which one do you mean?
+  - { id: F018, group: Feedback, ask: "billing of xyzabc branch", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'xyzabc'. If it doesn't matter for this question, choose I
+  - { id: F019, group: Feedback, ask: "weather in pune", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'weather'. What does it mean here?
+  - { id: F020, group: Feedback, ask: "delete all invoices of june 2026", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'delete'. If it doesn't matter for this question, choose I
+  - { id: F021, group: Feedback, ask: "billing; drop table smtbmcustomer", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'drop'. If it doesn't matter for this question, choose Ign
+  - { id: F022, group: Feedback, ask: "billing of ' or 1=1 -- branch", expect: { type: answer } }  # asked to clarify, user gave up; read as: '1 1 branch' matches more than one branch. Which one do you mean?
+  - { id: F023, group: Feedback, ask: "show mobile numbers of all employees", expect: { type: answer } }  # asked to clarify, user gave up; read as: I don't know the word 'mobile'. If it doesn't matter for this question, choose I

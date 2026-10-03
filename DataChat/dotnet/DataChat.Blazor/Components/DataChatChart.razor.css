@@ -1,0 +1,21 @@
+.dc-chart {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    margin: 6px 0;
+}
+
+.dc-grid {
+    stroke: #e5e7eb;
+    stroke-width: 1;
+}
+
+.dc-axis {
+    font-size: 11px;
+    fill: #6b7280;
+}
+
+.dc-legend {
+    font-size: 12px;
+    fill: #374151;
+}

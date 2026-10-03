@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/dotnet/">
+    <Project Path="dotnet/DataChat.Blazor/DataChat.Blazor.csproj" />
+    <Project Path="dotnet/DataChat.SampleHost/DataChat.SampleHost.csproj" />
+  </Folder>
+</Solution>
